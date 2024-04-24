@@ -1,0 +1,68 @@
+buildscript {
+    ext {
+        serenityCoreVersion = '3.3.0'
+        junitVersion = '5.8.2'
+        lombokVersion = '1.18.22'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.serenity-bdd:serenity-single-page-report:$serenityCoreVersion"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id "net.serenity-bdd.serenity-gradle-plugin" version "${serenityCoreVersion}"
+}
+
+group = 'angel.pineda.juanes'
+version = '1.0-SNAPSHOT'
+defaultTasks 'clean', 'test', 'aggregate'
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Dependencias para pruebas
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+
+    // Dependencias de Serenity
+    implementation "net.serenity-bdd:serenity-core:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-junit5:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-cucumber:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-rest-assured:$serenityCoreVersion"
+
+    implementation "net.serenity-bdd:serenity-ensure:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-screenplay:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-screenplay-webdriver:$serenityCoreVersion"
+    implementation "net.serenity-bdd:serenity-screenplay-rest:$serenityCoreVersion"
+   }
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    systemProperties System.getProperties()
+}
+
+serenity {
+    testRoot = "angel.pineda.juanes.runner"
+    requirementsBaseDir = "src/test/resources/features"
+    reports = ["single-page-html"]
+}
+
+gradle.startParameter.continueOnFailure = true
+
+test.finalizedBy(aggregate)
+
+
